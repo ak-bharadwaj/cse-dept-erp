@@ -1,0 +1,4833 @@
+1Feature: Student Onboarding
+Objective
+
+Create a student account in the Department ERP and allow the student to complete their own profile after receiving login credentials.
+
+Stage 1: Initial Student Registration (Department)
+Performed By
+Data Entry Operator
+Trigger
+
+Department receives the official student list from the college.
+
+Input Fields
+Academic Information
+University Registration Number
+Roll Number
+Student Name
+Admission Year
+Batch
+Section
+Department
+Student College Email (if available)
+Optional Fields
+Student Mobile Number
+Parent Mobile Number
+Validation
+Roll Number must be unique.
+Registration Number must be unique.
+Batch and Section must exist.
+Student name cannot be empty.
+Output
+
+Creates:
+
+Student Record
+User Account
+Temporary Password
+Account Status = Pending Profile Completion
+Stage 2: Student Profile Completion
+Performed By
+Student
+Trigger
+
+Student logs in for the first time.
+
+If profile status is Pending Profile Completion, the dashboard redirects the student to the Profile Completion page.
+
+Required Fields
+Personal Information
+Date of Birth
+Gender
+Blood Group
+Aadhaar Number (optional)
+Category
+Caste
+Religion
+Nationality
+Contact Information
+Personal Email
+Mobile Number
+Alternate Mobile Number
+Address
+Permanent Address
+Current Address
+Parent Details
+Father Name
+Mother Name
+Guardian Name (if applicable)
+Parent Mobile Number
+Parent Email
+Academic Background
+Intermediate / Diploma
+Previous Institution
+Year of Passing
+Document Upload
+Passport Photo
+Aadhaar
+SSC Memo
+Intermediate Memo
+Transfer Certificate
+Income Certificate (optional)
+Caste Certificate (optional)
+Validation
+
+The system shall verify:
+
+Required fields are completed.
+Uploaded documents are valid.
+Mobile numbers follow correct format.
+Email format is valid.
+Stage 3: Verification
+Performed By
+Data Entry Operator / HOD
+Actions
+Review submitted profile.
+Approve or reject.
+Request corrections if required.
+Status
+Pending Profile
+
+↓
+
+Submitted
+
+↓
+
+Under Verification
+
+↓
+
+Approved
+
+↓
+
+Active Student
+Data Ownership
+
+This is another thing I think we should define for every feature.
+
+Field	Editable By
+Roll Number	Operator/HOD
+Registration Number	Operator/HOD
+Batch	HOD
+Section	HOD
+Student Name	Operator/HOD
+DOB	Student (until approved), then HOD
+Mobile Number	Student
+Address	Student
+Parent Details	Student
+Documents	Student
+Academic Results	Imported Only
+Attendance	Faculty Only
+
+This is incredibly useful because the backend agent can generate permissions automatically.
+
+Status Lifecycle
+
+Every entity should also have a lifecycle.
+
+For Student:
+
+Created
+    ↓
+Pending Profile
+    ↓
+Profile Submitted
+    ↓
+Under Verification
+    ↓
+Approved
+    ↓
+Active
+    ↓
+Graduated
+    ↓
+Archived
+2Feature: Faculty Management
+Objective
+
+Maintain complete information about faculty members in the department and provide authenticated access to departmental services.
+
+The system is not responsible for faculty recruitment or HR management. It only maintains faculty records required for departmental operations.
+
+Stage 1: Faculty Registration
+Performed By
+Super Admin
+HOD
+Trigger
+
+A faculty member joins the department or an existing faculty member needs to be added to the system.
+
+Input Fields
+Basic Information
+Employee ID
+Faculty Name
+Official Email
+Mobile Number
+Designation
+Department
+Date of Joining
+Employment Type (Permanent / Contract / Guest)
+Status (Active / On Leave / Retired)
+Academic Information
+Highest Qualification
+Specialization
+University
+Total Teaching Experience
+Industry Experience
+Areas of Interest
+Profile
+Profile Photo
+Faculty Bio (Optional)
+Validation
+Employee ID must be unique.
+Official Email must be unique.
+Mobile number must be valid.
+Joining date cannot be in the future.
+Output
+
+Creates
+
+Faculty Record
+User Account
+Temporary Password
+Faculty Profile
+
+Account Status = Pending Password Reset
+
+Stage 2: Faculty First Login
+Performed By
+Faculty
+Workflow
+
+Faculty receives login credentials.
+
+↓
+
+Faculty logs in.
+
+↓
+
+Changes temporary password.
+
+↓
+
+Verifies email/mobile.
+
+↓
+
+Account becomes Active.
+
+Faculty Editable Fields
+
+Faculty may update:
+
+Mobile Number
+Personal Email
+Profile Photo
+Qualification
+Experience
+Research Interests
+Biography
+
+Faculty cannot update:
+
+Employee ID
+Designation
+Department
+Joining Date
+
+These require HOD/Admin approval.
+
+Faculty Profile
+
+The system shall maintain the following information.
+
+Personal
+Name
+Gender
+Date of Birth
+Blood Group
+Address
+Mobile Number
+Email
+Emergency Contact
+Professional
+Employee ID
+Designation
+Department
+Joining Date
+Employment Type
+Qualification
+Specialization
+Experience
+Academic
+Subjects Taught
+Previous Subjects
+Areas of Expertise
+FDPs Attended
+Workshops
+Certifications
+Research
+Publications
+Journals
+Conferences
+Patents
+Books
+Book Chapters
+Research Projects
+Consultancy
+Documents
+Resume
+Certificates
+Appointment Order
+Promotion Orders
+Qualification Certificates
+Data Ownership
+Field	Editable By
+Employee ID	Admin
+Designation	HOD
+Department	Admin
+Qualification	Faculty
+Experience	Faculty
+Research Publications	Faculty
+Mobile Number	Faculty
+Profile Photo	Faculty
+Status	HOD
+Process Flow
+Faculty Joins Department
+
+↓
+
+HOD Creates Faculty Record
+
+↓
+
+System Generates Login
+
+↓
+
+Faculty Logs In
+
+↓
+
+Password Changed
+
+↓
+
+Profile Completed
+
+↓
+
+Faculty Becomes Active
+
+↓
+
+Available for Subject Allocation
+Data Created
+
+Creates
+
+Faculty Record
+Login Account
+Research Profile
+Qualification Records
+Experience Records
+Uploaded Documents
+Data Used By
+
+Faculty information is consumed by:
+
+Subject Allocation
+Attendance
+Internal Marks
+Events
+Research Module
+Reports
+Workload Reports
+Accreditation Reports
+Business Rules
+Employee ID cannot change.
+Faculty cannot delete their profile.
+Inactive faculty cannot receive subject allocations.
+Retired faculty records remain archived.
+Historical teaching records must remain available even after retirement.
+Notifications
+Login credentials after account creation.
+Password reset notifications.
+Profile completion reminders.
+Reports
+Faculty Directory
+Faculty Qualification Report
+Faculty Experience Report
+Research Publications Report
+Workload Report
+Department Faculty Summary
+Error Cases
+Duplicate Employee ID.
+Duplicate Official Email.
+Missing mandatory fields.
+Invalid document upload.
+Attempt to modify restricted fields.
+Acceptance Criteria
+
+✅ Faculty can log in.
+
+✅ Faculty profile can be completed.
+
+✅ Faculty appears in the faculty directory.
+
+✅ Faculty is available for subject allocation.
+
+✅ Faculty details are available in reports.
+3Feature: Faculty Subject Allocation
+Objective
+
+Assign faculty members to teach specific subjects for a particular academic session.
+
+The Department ERP does not create the timetable or decide allocations. The department prepares the allocation outside the system, and the ERP records/imports it for operational use.
+
+Owner
+
+Academic Management
+
+External Dependency
+
+Source:
+
+Department/HOD
+Official Faculty Allocation Sheet
+
+Input Format:
+
+Excel
+CSV
+Manual Entry
+Actors
+Primary
+HOD
+Data Entry Operator
+View Only
+Faculty
+Super Admin
+Trigger
+
+Before the beginning of every semester, the department finalizes faculty allocations.
+
+After approval, the allocation is entered into the ERP.
+
+Required Inputs
+Academic Session
+Academic Year
+Semester
+Odd/Even Semester
+Faculty
+Faculty Name
+Employee ID
+Subject
+Subject Code
+Subject Name
+Subject Type
+Theory
+Lab
+Project
+Seminar
+Teaching Details
+Section
+Number of Students
+Credits
+Hours per Week
+Validation
+
+The system shall verify:
+
+Faculty exists.
+Subject exists.
+Section exists.
+Academic Session exists.
+Duplicate allocation is not created.
+A faculty cannot be assigned the same subject twice for the same section and semester.
+Process Flow
+Department Finalizes Allocation
+
+↓
+
+Allocation Sheet
+
+↓
+
+Import / Manual Entry
+
+↓
+
+Validation
+
+↓
+
+Faculty Linked
+
+↓
+
+Subject Linked
+
+↓
+
+Academic Session Linked
+
+↓
+
+Allocation Saved
+
+↓
+
+Faculty Dashboard Updated
+
+↓
+
+Attendance Enabled
+
+↓
+
+Internal Marks Enabled
+
+↓
+
+Workload Updated
+Data Created
+
+Creates
+
+Faculty Allocation
+Teaching Assignment
+Faculty Workload Entry
+Data Used By
+
+This feature is used by:
+
+Attendance Module
+Internal Marks Module
+Faculty Dashboard
+Workload Reports
+Academic Reports
+Accreditation Reports
+
+Without a valid allocation:
+
+Faculty cannot take attendance.
+Faculty cannot upload internal marks.
+Faculty cannot access student lists for that subject.
+Business Rules
+Every allocation belongs to one Academic Session.
+Allocations are semester-specific.
+Previous semester allocations remain unchanged.
+Faculty may teach multiple subjects.
+Multiple faculty may teach different sections of the same subject.
+Practical and theory allocations are maintained separately.
+Once the semester starts, only HOD can modify allocations.
+Permissions
+Action	Data Entry Operator	Faculty	HOD	Super Admin
+View All Allocations	✅	❌ (Only Own)	✅	✅
+View Own Allocation	❌	✅	✅	✅
+Import Allocation	✅	❌	✅	✅
+Manual Entry	✅	❌	✅	✅
+Edit Allocation	✅	❌	✅	✅
+Delete Allocation	❌ (or only before semester starts)	❌	✅	✅
+Lock Allocation	❌	❌	✅	✅
+Reports
+
+The system shall generate:
+
+Faculty Workload Report
+Subject Allocation Report
+Section-wise Faculty List
+Faculty-wise Subject List
+Semester Teaching Summary
+Error Cases
+Faculty not found.
+Subject not found.
+Duplicate allocation.
+Invalid academic session.
+Missing mandatory fields.
+Invalid Excel format.
+Acceptance Criteria
+
+✅ Faculty can view assigned subjects.
+
+✅ Assigned subjects appear in the faculty dashboard.
+
+✅ Attendance can only be recorded for assigned subjects.
+
+✅ Internal marks can only be entered for assigned subjects.
+
+✅ Workload reports reflect the allocation.
+4Feature: Attendance Management
+Objective
+
+Allow faculty members to record attendance for students assigned to their allocated subjects and provide attendance reports for students and department administration.
+
+Attendance records become part of the student's academic history and shall be preserved permanently.
+
+Owner
+
+Academic Management
+
+Dependencies
+
+This feature depends on:
+
+Student Registration
+Academic Session
+Subject Master
+Faculty Subject Allocation
+
+Attendance cannot be recorded unless these are available.
+
+Actors
+Primary
+Faculty
+Secondary
+Data Entry Operator
+HOD
+View Only
+Student
+Super Admin
+Trigger
+
+Faculty begins a scheduled class.
+
+Faculty logs into the ERP and records attendance for that class.
+
+Attendance Creation Flow
+Faculty Login
+
+↓
+
+Select Academic Session
+
+↓
+
+Select Subject
+
+↓
+
+Select Section
+
+↓
+
+System loads enrolled students
+
+↓
+
+Faculty marks attendance
+
+↓
+
+Submit
+
+↓
+
+Attendance stored
+
+↓
+
+Attendance statistics updated
+
+↓
+
+Student attendance updated
+Attendance Form
+Step 1 – Select Class
+
+Fields
+
+Academic Year
+Semester
+Subject
+Section
+Date
+Period
+Class Type
+Theory
+Lab
+Tutorial
+Seminar
+Faculty (Auto Selected)
+Step 2 – Student List
+
+For every student display
+
+Roll Number
+Student Name
+Present
+Absent
+Late (Optional)
+Medical Leave (Optional)
+On Duty (Optional)
+
+Default
+
+All students = Present
+
+Faculty changes only absentees.
+
+Step 3 – Remarks (Optional)
+General Remarks
+Holiday Reason
+Special Notes
+Validation
+
+The system shall verify:
+
+Faculty is allocated to the selected subject.
+Attendance is not already submitted for the same date, period, subject, and section.
+Attendance date belongs to the active academic session.
+Future dates are not allowed.
+Holidays cannot have attendance unless overridden by HOD.
+Attendance Status
+
+Supported values
+
+Present
+Absent
+Late
+Medical Leave
+On Duty
+Editing Attendance
+Faculty
+
+May edit attendance only on the same day.
+
+Data Entry Operator
+
+May edit attendance after receiving faculty approval.
+
+HOD
+
+Can edit attendance at any time.
+
+Every modification shall be recorded in the audit log.
+
+Data Created
+
+Creates
+
+Attendance Record
+Student Attendance Entry
+Audit Log
+
+Updates
+
+Student Attendance Percentage
+Subject Attendance Percentage
+Data Used By
+
+Attendance data is consumed by:
+
+Student Dashboard
+Faculty Dashboard
+Attendance Reports
+Detention Reports
+Parent Meetings
+Accreditation Reports
+Business Rules
+Attendance cannot be entered without subject allocation.
+Attendance cannot be recorded twice for the same class.
+Students added after attendance submission shall be handled manually.
+Every attendance modification shall record:
+Who changed it
+Previous value
+New value
+Date and Time
+Reason for change
+Permissions
+Action	Faculty	Operator	HOD	Student
+Record Attendance	✅	❌	✅	❌
+View Attendance	Own Subject	✅	✅	Own Only
+Edit Same Day	✅	✅	✅	❌
+Edit Previous Days	❌	✅*	✅	❌
+Delete Attendance	❌	❌	✅	❌
+Export Attendance	✅	✅	✅	❌
+
+Note: Operator edits previous-day attendance only based on official correction requests.
+
+Reports
+
+Generate:
+
+Daily Attendance Report
+Subject-wise Attendance
+Student Attendance Report
+Section Attendance Summary
+Low Attendance Students (<75%)
+Faculty Attendance Summary
+Monthly Attendance Report
+Notifications
+
+Student may receive:
+
+Low attendance warning.
+Attendance shortage notification.
+
+Faculty may receive:
+
+Reminder for missing attendance submissions.
+Error Cases
+Attendance already submitted.
+Invalid subject allocation.
+Student not found in section.
+Invalid attendance date.
+Session closed.
+Duplicate submission.
+Acceptance Criteria
+
+✅ Faculty can record attendance only for assigned subjects.
+
+✅ Students can view only their own attendance.
+
+✅ Attendance percentage updates automatically.
+
+✅ Duplicate attendance is prevented.
+
+✅ Every modification is recorded in the audit log.
+5Feature: Internal Assessment Management
+Objective
+
+Allow faculty members to record and manage Continuous Internal Assessment (CIA) marks for students assigned to their subjects.
+
+The system shall calculate internal marks based on the department's evaluation scheme and publish them after verification.
+
+The system does not manage external university examination marks.
+
+Owner
+
+Academic Management
+
+Dependencies
+
+Requires:
+
+Student Registration
+Faculty Registration
+Subject Allocation
+Student Enrollment
+Academic Session
+Actors
+Primary
+Faculty
+Secondary
+Data Entry Operator
+Approval
+HOD
+View
+Student
+Super Admin
+Trigger
+
+The department announces an internal assessment.
+
+Example:
+
+Mid-1
+Mid-2
+Assignment
+Lab Internal
+Viva
+Quiz
+Assessment Configuration
+
+Before marks entry, the HOD configures the assessment.
+
+Fields
+
+Academic Year
+Semester
+Assessment Name
+Assessment Type
+Maximum Marks
+Passing Marks
+Start Date
+End Date
+Applicable Subjects
+
+Example
+
+Assessment Name : Mid-1
+
+Type : Internal Exam
+
+Maximum Marks : 30
+
+Passing Marks : 12
+Marks Entry Flow
+Faculty Login
+
+↓
+
+Select Assessment
+
+↓
+
+Select Subject
+
+↓
+
+Select Section
+
+↓
+
+System loads students
+
+↓
+
+Faculty enters marks
+
+↓
+
+Validation
+
+↓
+
+Save Draft / Submit
+
+↓
+
+Marks Locked
+
+↓
+
+Student Dashboard Updated
+Marks Entry Screen
+
+Display
+
+Roll Number
+Student Name
+Attendance %
+Marks Obtained
+Absent Checkbox
+Malpractice Checkbox
+Remarks
+Validation
+
+The system shall verify:
+
+Faculty is assigned to the subject.
+Marks cannot exceed maximum marks.
+Marks cannot be negative.
+Duplicate submissions are prevented.
+Locked assessments cannot be edited.
+Assessment Status
+Draft
+
+↓
+
+Submitted
+
+↓
+
+Verified
+
+↓
+
+Published
+
+↓
+
+Locked
+Editing Rules
+Faculty
+Can edit while status is Draft.
+Cannot edit after submission.
+Data Entry Operator
+Can correct marks only before publication.
+Every correction must be logged.
+HOD
+Can unlock an assessment.
+Can approve corrections.
+Can publish marks.
+Data Created
+
+Creates
+
+Assessment
+Student Marks
+Marks History
+Audit Log
+
+Updates
+
+Internal Total
+Student Dashboard
+Faculty Dashboard
+Business Rules
+Marks belong to one assessment.
+One student can have only one mark per assessment.
+Published marks become read-only.
+Every modification shall be recorded.
+Absent students receive zero marks unless changed by HOD.
+Permissions
+Action	Faculty	Operator	HOD	Student
+Enter Marks	✅	❌	✅	❌
+Edit Draft	✅	✅	✅	❌
+Submit	✅	❌	✅	❌
+Publish	❌	❌	✅	❌
+View Marks	Own Subject	✅	✅	Own Only
+Unlock	❌	❌	✅	❌
+Reports
+
+Generate:
+
+Assessment Report
+Subject-wise Marks
+Student Performance Report
+Top Performers
+Failed Students
+Average Marks
+Faculty Assessment Summary
+Notifications
+
+Students receive:
+
+Internal marks published.
+Assessment schedule.
+Low internal marks warning.
+
+Faculty receive:
+
+Pending marks entry reminder.
+Error Cases
+Marks exceed maximum.
+Assessment not found.
+Faculty not allocated.
+Assessment locked.
+Duplicate submission.
+Invalid student.
+Acceptance Criteria
+
+✅ Faculty can enter marks only for assigned subjects.
+
+✅ Students can view only published marks.
+
+✅ Published marks cannot be edited without HOD approval.
+
+✅ All changes are logged.
+6Feature: University Result Import
+Objective
+
+Import official semester examination results published by the university or college examination branch into the Department ERP.
+
+The Department ERP shall not calculate or modify official university results. It only stores, validates, and presents the imported data.
+
+Owner
+
+Academic Management
+
+External Dependency
+
+Source
+
+University Examination Branch
+College ERP
+Official Result Portal
+
+Input Format
+
+Excel
+CSV
+API (Future)
+Actors
+Primary
+Data Entry Operator
+Secondary
+HOD
+View
+Student
+Faculty
+Super Admin
+Trigger
+
+After semester examinations are completed, the university publishes the official results.
+
+The department receives the result sheet and imports it into the ERP.
+
+Import Information
+Academic Details
+Academic Year
+Semester
+Regulation
+Examination Month
+Examination Year
+Student Details
+University Registration Number
+Roll Number
+Student Name
+Subject Results
+
+For every subject
+
+Subject Code
+Subject Name
+Credits
+Grade
+Grade Point
+Result Status (Pass/Fail)
+Internal Marks (Optional)
+External Marks (Optional)
+Total Marks (Optional)
+Semester Summary
+SGPA
+CGPA
+Total Credits Earned
+Result Status
+Validation
+
+The system shall verify:
+
+Student exists in the ERP.
+Subject exists.
+Duplicate imports are prevented.
+Semester matches the selected academic session.
+Registration number is valid.
+Grade values are valid.
+Import Workflow
+University Publishes Results
+
+↓
+
+Department Receives Result File
+
+↓
+
+Operator Selects Academic Session
+
+↓
+
+Upload Result File
+
+↓
+
+System Validates Data
+
+↓
+
+Invalid Records Displayed
+
+↓
+
+Operator Corrects Errors
+
+↓
+
+Import Successful
+
+↓
+
+Student Academic History Updated
+
+↓
+
+Reports Updated
+
+↓
+
+Students Can View Results
+Data Created
+
+Creates
+
+Semester Result
+Subject Result
+Grade Record
+Academic History Entry
+Import Log
+Data Updated
+
+Updates
+
+Student Result History
+CGPA
+SGPA
+Credit Summary
+Backlog Count
+Academic Dashboard
+Data Used By
+
+Result data is consumed by
+
+Student Dashboard
+Faculty Dashboard
+Placement Module
+Scholarship Reports
+Academic Reports
+NBA Reports
+NAAC Reports
+Department Analytics
+Business Rules
+Official results cannot be manually created.
+Imported results become read-only.
+Previous semester results cannot be modified.
+Re-import is allowed only if an official revised result is issued.
+Every import shall be stored with date, time, and operator details.
+Revised Result Handling
+
+If the university publishes revised results
+
+Workflow
+
+Revised Result File
+
+↓
+
+Operator Uploads
+
+↓
+
+System Compares Previous Data
+
+↓
+
+Changed Subjects Highlighted
+
+↓
+
+HOD Approval
+
+↓
+
+Previous Result Archived
+
+↓
+
+New Result Activated
+Permissions
+Action	Operator	Faculty	HOD	Student
+Import Results	✅	❌	✅	❌
+View Results	✅	Own Students	✅	Own Only
+Export Results	✅	✅	✅	Own Only
+Re-import Revised Results	✅	❌	✅	❌
+Delete Import	❌	❌	✅	❌
+Reports
+
+Generate
+
+Semester Result Report
+Subject-wise Result Analysis
+Pass Percentage
+Fail Percentage
+Backlog Report
+SGPA Distribution
+CGPA Distribution
+Toppers List
+Semester Statistics
+Notifications
+
+Students receive
+
+Semester results published.
+Revised results published.
+
+HOD receives
+
+Import completed successfully.
+Import errors found.
+Error Cases
+Invalid file format.
+Duplicate result file.
+Student not found.
+Subject code mismatch.
+Invalid grade.
+Missing mandatory columns.
+Acceptance Criteria
+
+✅ Official result files can be imported.
+
+✅ Student result history is updated automatically.
+
+✅ CGPA/SGPA is updated.
+
+✅ Reports reflect the imported data.
+
+✅ Results cannot be edited manually after import.
+
+I would also add a section that many ERP systems miss:
+File Format Specification
+
+Your AI should know exactly what an import file looks like.
+
+Example:
+
+Column	Required	Description
+Registration Number	✅	Unique university registration number
+Roll Number	✅	Department roll number
+Subject Code	✅	Subject identifier
+Subject Name	✅	Name of subject
+Grade	✅	Grade obtained
+Grade Point	✅	Numeric grade point
+Credits	✅	Subject credits
+SGPA	✅	Semester GPA
+CGPA	✅	Cumulative GPA
+Result Status	✅	Pass/Fail
+7Feature: Student Placement Record
+Objective
+
+Maintain placement information of students after the placement process is completed.
+
+The system is used to record which students are placed, the company they joined, and the offer details for departmental records and reports.
+
+Actors
+Primary
+Data Entry Operator
+Secondary
+HOD
+View
+Student
+Faculty
+Super Admin
+Trigger
+
+After placement results are officially announced, the department updates the placement details of selected students.
+
+Input Fields
+Student Information
+Roll Number
+Student Name (Auto-filled)
+Batch (Auto-filled)
+Company Information
+Company Name
+Job Role
+Offer Information
+Offer Type
+Full Time
+Internship
+Internship + PPO
+Package (LPA)
+Offer Date
+Joining Date (Optional)
+Status
+Selected
+Joined
+Offer Declined
+Higher Studies
+Entrepreneurship
+Not Placed
+Documents (Optional)
+Offer Letter
+Joining Letter
+Validation
+Student must exist.
+Company Name is required.
+Package must be greater than zero (if selected).
+One student can have multiple offers.
+One offer can be marked as Final Accepted Offer.
+Workflow
+Placement Results Announced
+
+↓
+
+Operator Selects Student
+
+↓
+
+Enter Company Details
+
+↓
+
+Enter Package & Offer Type
+
+↓
+
+Save
+
+↓
+
+Student Placement Record Updated
+
+↓
+
+Reports Updated
+Data Created
+
+Creates
+
+Placement Record
+Company Record (if new)
+Data Used By
+Student Profile
+Placement Reports
+NBA Reports
+NAAC Reports
+Department Statistics
+Business Rules
+Students may receive multiple offers.
+One offer can be marked as the final accepted offer.
+Placement records remain permanent.
+Deleted placement records should be archived.
+Reports
+
+Generate
+
+Placed Students List
+Company-wise Placements
+Highest Package
+Average Package
+Batch-wise Placement Report
+Placement Percentage
+Offer Type Distribution (Full Time / Internship / PPO)
+Acceptance Criteria
+
+✅ Placement details can be added.
+
+✅ Students can have multiple offers.
+
+✅ Final accepted offer is identified.
+
+✅ Placement reports are generated correctly.
+8Feature: Department Event Management
+Objective
+
+Maintain records of all departmental events, workshops, seminars, guest lectures, hackathons, FDPs, industrial visits, and technical activities conducted by the department.
+
+Actors
+Primary
+Data Entry Operator
+Secondary
+HOD
+View
+Faculty
+Student
+Super Admin
+Trigger
+
+Whenever the department conducts or participates in an event.
+
+Event Information
+Basic Details
+Event Name
+Event Type
+Workshop
+Seminar
+Guest Lecture
+Hackathon
+Technical Event
+Cultural Event
+Industrial Visit
+FDP
+Conference
+Other
+Schedule
+Start Date
+End Date
+Venue
+Organizer
+Resource Person
+Speaker Name
+Designation
+Organization
+Participants
+Eligible Batch
+Eligible Sections
+Number of Participants
+Description
+Event Objective
+Event Description
+Outcomes (Optional)
+Attachments
+Event Brochure
+Invitation
+Photos
+Attendance Sheet
+Report PDF
+Certificates (Optional)
+Student Participation
+
+The operator can select participating students.
+
+Fields
+
+Roll Number
+Student Name
+Participation Type
+Participant
+Volunteer
+Organizer
+Winner
+Validation
+Event name is required.
+Start date cannot be after end date.
+Duplicate events should not be created.
+Uploaded files must be valid.
+Workflow
+Department Conducts Event
+
+↓
+
+Operator Creates Event
+
+↓
+
+Enter Event Details
+
+↓
+
+Add Student Participants
+
+↓
+
+Upload Photos & Report
+
+↓
+
+Save
+
+↓
+
+Student Profiles Updated
+
+↓
+
+Reports Updated
+Data Created
+
+Creates
+
+Event Record
+Participant Records
+Uploaded Documents
+Data Used By
+Student Profile
+Department Gallery
+Annual Report
+NBA Reports
+NAAC Reports
+Business Rules
+Events cannot be deleted after completion.
+Student participation remains part of the student's history.
+One student can participate in multiple events.
+Documents remain permanently stored.
+Reports
+
+Generate
+
+Event List
+Student Participation Report
+Event-wise Participants
+Annual Event Report
+Department Activity Report
+Acceptance Criteria
+
+✅ Events can be created.
+
+✅ Student participation can be recorded.
+
+✅ Event documents can be uploaded.
+
+✅ Student profiles show participated events.
+9Feature: Student Achievements & Certifications
+Objective
+
+Allow students to maintain a portfolio of their achievements, certifications, internships, competitions, publications, and other accomplishments throughout their academic journey.
+
+Each achievement may include supporting documents as proof.
+
+Actors
+Primary
+Student
+View
+Faculty
+HOD
+Data Entry Operator
+Super Admin
+Trigger
+
+Whenever a student completes an activity, earns a certificate, or receives an achievement.
+
+Achievement Categories
+Internship
+Certification
+Hackathon
+Coding Contest
+Workshop
+Seminar
+Paper Presentation
+Project Competition
+Sports
+Cultural Event
+Publication
+Patent
+Volunteer Activity
+Other
+Input Fields
+Basic Information
+Achievement Title
+Category
+Organizer
+Organization
+Achievement Date
+Details
+Description
+Achievement Level
+College
+University
+State
+National
+International
+Position (Optional)
+Winner
+Runner-up
+Participant
+Certified
+Completed
+Supporting Proof
+
+Students may upload one or more files.
+
+Supported files:
+
+Certificate
+Offer Letter (Internship)
+Completion Certificate
+Participation Certificate
+Award Letter
+Result Screenshot
+Event Photos (Optional)
+Other Supporting Documents
+Proof Requirement
+
+Some categories require proof before submission.
+
+Category	Proof Required
+Internship	✅
+Certification	✅
+Hackathon	✅
+Coding Contest	✅
+Workshop	✅
+Paper Presentation	✅
+Publication	✅
+Patent	✅
+Sports	Optional
+Cultural	Optional
+Other	Optional
+Workflow
+Student Completes Activity
+
+↓
+
+Student Opens Achievement Portal
+
+↓
+
+Select Category
+
+↓
+
+Enter Details
+
+↓
+
+Upload Supporting Proof (if required)
+
+↓
+
+Submit
+
+↓
+
+Achievement Added to Student Profile
+
+↓
+
+Available in Reports
+Validation
+
+The system shall verify:
+
+Title is mandatory.
+Category is mandatory.
+Achievement date cannot be in the future.
+Required proof must be uploaded for applicable categories.
+Only supported file formats may be uploaded.
+Duplicate achievement entries should be prevented.
+Business Rules
+Students can add multiple achievements.
+Students can edit or delete their own achievements.
+Required proof must be uploaded for designated categories.
+Uploaded files remain linked to the achievement.
+Achievements become part of the student's permanent profile.
+Data Used By
+Student Profile
+Placement Profile
+Annual Reports
+NBA Reports
+NAAC Reports
+Department Statistics
+Reports
+
+Generate
+
+Student Achievement Report
+Internship Report
+Certification Report
+Competition Report
+Publication Report
+Batch-wise Achievement Summary
+Acceptance Criteria
+
+✅ Students can add achievements.
+
+✅ Required proof is enforced based on category.
+
+✅ Multiple proof documents can be uploaded.
+
+✅ Achievements appear in the student's profile
+10 Feature: Faculty Research & Publications
+Objective
+
+Maintain records of faculty research activities including publications, conferences, patents, books, research projects, FDPs, workshops, and professional achievements.
+
+Faculty members shall maintain their own records.
+
+Actors
+Primary
+Faculty
+View
+HOD
+Data Entry Operator
+Super Admin
+Trigger
+
+Whenever a faculty member completes a research activity or professional development activity.
+
+Research Categories
+Journal Publication
+Conference Publication
+Book
+Book Chapter
+Patent
+Copyright
+Research Project
+Consultancy
+FDP
+Workshop
+Seminar
+Certification
+Guest Lecture
+Reviewer Activity
+Editorial Board
+Other
+Input Fields
+Basic Information
+Title
+Category
+Organization / Publisher
+Date
+Additional Details
+Authors
+Journal / Conference Name
+ISBN / ISSN (Optional)
+DOI (Optional)
+Publisher
+Indexing
+Scopus
+SCI
+Web of Science
+UGC CARE
+Other
+Supporting Documents
+Publication PDF
+Certificate
+Patent Document
+Acceptance Letter
+Project Approval Letter
+Completion Certificate
+Other Supporting Documents
+Proof Requirement
+Category	Proof Required
+Journal Publication	✅
+Conference Publication	✅
+Patent	✅
+Book	✅
+Book Chapter	✅
+Research Project	✅
+Consultancy	✅
+FDP	✅
+Workshop	✅
+Certification	✅
+Guest Lecture	Optional
+Workflow
+Faculty Completes Activity
+
+↓
+
+Faculty Opens Research Portal
+
+↓
+
+Select Category
+
+↓
+
+Enter Details
+
+↓
+
+Upload Supporting Documents
+
+↓
+
+Save
+
+↓
+
+Research Profile Updated
+
+↓
+
+Reports Updated
+Validation
+
+The system shall verify:
+
+Title is mandatory.
+Category is mandatory.
+Activity date cannot be in the future.
+Required proof is uploaded.
+Duplicate records should not be created.
+Business Rules
+Faculty can add multiple research records.
+Faculty can edit or delete their own records.
+Supporting documents remain linked to the record.
+Research records remain permanently available.
+Data Used By
+Faculty Profile
+Annual Report
+NBA Reports
+NAAC Reports
+Department Statistics
+Reports
+
+Generate
+
+Faculty Publication Report
+Journal Publications
+Conference Publications
+Patent Report
+Research Project Report
+FDP Report
+Workshop Report
+Faculty Research Summary
+Acceptance Criteria
+
+✅ Faculty can add research activities.
+
+✅ Required supporting documents are enforced.
+
+✅ Research records appear in the faculty profile.
+
+✅ Reports are generated correctly.
+11 Feature: Department Document Management
+Objective
+
+Maintain and organize departmental documents in a centralized repository for easy access, retrieval, and record keeping.
+
+Actors
+Primary
+Data Entry Operator
+HOD
+Secondary
+Faculty
+View
+Students (Only documents shared with students)
+Super Admin
+Trigger
+
+Whenever a department document needs to be stored or shared.
+
+Document Categories
+Academic Calendar
+Time Table
+Circular
+Notice
+Meeting Minutes
+Department Reports
+NBA Documents
+NAAC Documents
+Syllabus
+Lab Manual
+Question Papers
+Department Policies
+Forms
+Other
+Input Fields
+Basic Information
+Document Title
+Category
+Description (Optional)
+File Information
+Upload Document
+File Type
+File Size (Auto)
+Visibility
+HOD Only
+Faculty Only
+Students
+Public (Department)
+Organization
+Academic Year
+Semester (Optional)
+Subject (Optional)
+Validation
+
+The system shall verify:
+
+Title is required.
+Category is required.
+A document must be uploaded.
+Only supported file formats are accepted.
+Duplicate files should be prevented where possible.
+Workflow
+User Uploads Document
+
+↓
+
+Enter Document Details
+
+↓
+
+Select Visibility
+
+↓
+
+Upload File
+
+↓
+
+Save
+
+↓
+
+Document Available to Authorized Users
+Business Rules
+Multiple versions of a document may be uploaded.
+Previous versions shall remain available.
+Only authorized users can edit or delete documents.
+Documents remain archived even after academic years are completed.
+Permissions
+Action	Student	Faculty	Operator	HOD
+View Shared Documents	✅	✅	✅	✅
+Upload	❌	✅	✅	✅
+Edit	❌	Own	✅	✅
+Delete	❌	Own	✅	✅
+Data Used By
+Student Portal
+Faculty Portal
+Department Repository
+Accreditation Reports
+Reports
+
+Generate
+
+Documents by Category
+Documents by Academic Year
+Recently Uploaded Documents
+Document Access Report
+Acceptance Criteria
+
+✅ Documents can be uploaded.
+
+✅ Documents are organized by category.
+
+✅ Visibility controls work correctly.
+
+✅ Users can download documents they have permission to access.
+12Feature: Department Home Page
+Objective
+
+Provide a professional landing page that showcases the department's achievements, activities, faculty, placements, and important information while serving as the entry point to the ERP.
+
+Sections
+Hero Section
+Department Name
+Department Vision & Mission
+Welcome Message
+Login Button
+Contact Information
+About Department
+Department Overview
+Programs Offered
+Laboratories
+Infrastructure
+Department Statistics
+Department Highlights
+
+Display key statistics such as:
+
+Total Students
+Total Faculty
+Placement Percentage
+Highest Package
+Companies Visited
+Research Publications
+Patents
+Events Conducted
+Student Achievements
+
+Show recent achievements such as:
+
+Hackathon Winners
+Competition Winners
+Certifications
+Internships
+Publications
+Sports & Cultural Achievements
+Placements
+
+Display:
+
+Recently Placed Students
+Company Logos
+Highest Package
+Average Package
+Placement Statistics
+Faculty Highlights
+
+Display:
+
+Faculty Profiles
+Research Publications
+Patents
+Awards & Recognitions
+Certifications
+Ongoing Research Projects
+Events
+
+Display:
+
+Upcoming Events
+Recent Events
+Workshops
+Guest Lectures
+Industrial Visits
+FDPs
+Announcements
+
+Display:
+
+Latest Notices
+Circulars
+Important Dates
+Gallery
+Event Photos
+Laboratory Photos
+Department Activities
+Testimonials (Optional)
+Alumni
+Students
+Recruiters
+Contact Us
+Department Address
+Email
+Phone Number
+Faculty Contacts
+Location Map
+Business Rules
+Only approved/public information is displayed.
+Home page content should update automatically when new events, placements, achievements, or announcements are added.
+Sensitive student or faculty information must never be displayed publicly.
+HOD/Operator can choose whether an achievement, placement, or event is visible on the home page.
+Feature: Dashboard
+Objective
+
+Provide each user with a personalized dashboard displaying the most relevant information, pending tasks, recent activities, and quick access to frequently used features.
+
+Dashboard Types
+Student Dashboard
+
+Displays:
+
+Profile Completion Status
+Today's Classes
+Attendance Percentage
+Internal Marks Summary
+Latest Semester Results
+Placement Status
+Recent Achievements
+Upcoming Events
+Latest Announcements
+Quick Links
+Attendance
+Results
+Achievements
+Documents
+Faculty Dashboard
+
+Displays:
+
+Today's Teaching Schedule
+Assigned Subjects
+Attendance Pending
+Internal Marks Pending
+Student Count
+Recent Announcements
+Upcoming Events
+Research Summary
+Quick Links
+Attendance
+Internal Marks
+Research
+Documents
+HOD Dashboard
+
+Displays department-wide statistics.
+
+Student Statistics
+Total Students
+Batch-wise Distribution
+Section-wise Distribution
+Active Students
+Graduated Students
+Faculty Statistics
+Total Faculty
+Designation-wise Distribution
+Subject Allocations
+Academic Statistics
+Attendance Overview
+Internal Assessment Summary
+Result Summary
+Pass Percentage
+Backlog Statistics
+Placement Statistics
+Students Placed
+Placement Percentage
+Highest Package
+Average Package
+Companies Visited
+Events
+Upcoming Events
+Recently Conducted Events
+Achievements
+Student Achievements
+Faculty Publications
+Quick Actions
+Add Student
+Add Faculty
+Publish Announcement
+Upload Results
+Create Event
+Operator Dashboard
+
+Displays operational work.
+
+Pending Student Profiles
+Faculty Allocations
+Result Imports
+Recently Uploaded Documents
+Placement Updates
+Upcoming Events
+Recent Announcements
+Quick Actions
+Super Admin Dashboard
+
+Displays system-wide information.
+
+User Statistics
+Active Sessions
+Storage Usage
+Recent Logins
+Audit Logs
+Academic Session Status
+System Health
+Business Rules
+Every user sees only data relevant to their role.
+Statistics should update automatically.
+Quick actions depend on permissions.
+Dashboard widgets should not expose unauthorized data.
+One recommendation
+
+Instead of making the dashboard static, make it widget-based.
+
+Each dashboard is built from reusable widgets like:
+
+Attendance Summary
+Internal Marks
+Placement Statistics
+Recent Announcements
+Upcoming Events
+Quick Actions
+Calendar
+Recent Documents
+Student Count
+Faculty Count
+12 Feature: Reports & Analytics
+Objective
+
+Provide comprehensive reports and analytics for students, faculty, academics, placements, events, achievements, and departmental activities to support decision-making and accreditation requirements.
+
+Actors
+Primary
+HOD
+Secondary
+Data Entry Operator
+View
+Faculty (Limited Reports)
+Super Admin
+Report Categories
+Student Reports
+Student Directory
+Batch-wise Students
+Section-wise Students
+Student Profile Report
+Graduated Students
+Student Achievement Report
+Faculty Reports
+Faculty Directory
+Faculty Workload
+Faculty Publications
+Faculty Certifications
+Faculty Research Summary
+Academic Reports
+Attendance Report
+Subject-wise Attendance
+Student Attendance
+Internal Assessment Report
+Subject-wise Marks
+Result Analysis
+Pass Percentage
+Backlog Analysis
+Placement Reports
+Placed Students
+Company-wise Placements
+Placement Percentage
+Highest Package
+Average Package
+Internship Statistics
+Event Reports
+Events Conducted
+Student Participation
+Event-wise Attendance
+Annual Event Summary
+Achievement Reports
+Student Certifications
+Hackathons
+Internships
+Publications
+Awards
+Sports & Cultural Achievements
+Department Reports
+Academic Year Summary
+Annual Department Report
+NBA Supporting Data
+NAAC Supporting Data
+Filters
+
+Most reports should support:
+
+Academic Year
+Semester
+Batch
+Section
+Student
+Faculty
+Subject
+Date Range
+Category
+Export Options
+PDF
+Excel
+CSV
+Dashboard Analytics
+
+The system should also provide visual summaries such as:
+
+Student Strength
+Attendance Trends
+Result Trends
+Placement Trends
+Event Statistics
+Achievement Distribution
+Faculty Publications
+Research Growth
+Business Rules
+Reports are generated based on user permissions.
+Reports should always reflect the latest available data.
+Exported reports should include generation date and generated by information.
+Acceptance Criteria
+
+✅ Reports can be filtered.
+
+✅ Reports can be exported.
+
+✅ Only authorized users can access restricted reports.
+
+✅ Dashboard statistics match report data.
+13Feature: User & Role Management
+Objective
+
+Manage user accounts, roles, and permissions to ensure that users can only access features and data relevant to their responsibilities.
+
+Actors
+Primary
+Super Admin
+Secondary
+HOD (Limited User Management)
+User Types
+Super Admin
+HOD
+Faculty
+Data Entry Operator
+Student
+User Information
+Basic Information
+User ID
+Name
+Email
+Mobile Number
+Role
+Department
+Status
+Active
+Inactive
+Suspended
+Account Information
+Username
+Password (Encrypted)
+Last Login
+Password Last Changed
+Account Created Date
+Permissions
+
+The system shall assign permissions based on roles.
+
+Example:
+
+Module	Student	Faculty	Operator	HOD	Super Admin
+Student Management	View Own	View	Manage	Manage	Manage
+Faculty Management	❌	View Own	Manage	Manage	Manage
+Attendance	View Own	Manage	Edit	Manage	Manage
+Internal Marks	View Own	Manage	Edit	Manage	Manage
+Results	View Own	View	Import	Manage	Manage
+Placements	View Own	View	Manage	Manage	Manage
+Events	View	View	Manage	Manage	Manage
+Reports	Limited	Limited	Department	Department	All
+Documents	View	Manage	Manage	Manage	Manage
+User Lifecycle
+Create User
+
+↓
+
+Assign Role
+
+↓
+
+Activate Account
+
+↓
+
+User Login
+
+↓
+
+Password Change
+
+↓
+
+Regular Usage
+
+↓
+
+Deactivate (if required)
+Business Rules
+Each user shall have one primary role.
+Students and faculty receive accounts automatically when their records are created.
+Only Super Admin can create or remove HOD accounts.
+Deactivated users cannot log in.
+All permission changes shall be recorded.
+Account Management
+
+The system shall support:
+
+Create User
+Edit User
+Activate / Deactivate User
+Reset Password
+Change Role
+Unlock Account
+Authentication
+Secure Login
+Forgot Password
+Change Password
+Session Timeout
+Logout
+Acceptance Criteria
+
+✅ User accounts can be created and managed.
+
+✅ Permissions are enforced according to roles.
+
+✅ Unauthorized users cannot access restricted modules.
+
+✅ Password reset and account activation work correctly.
+14Feature: System Configuration (Master Data)
+Objective
+
+Provide a centralized configuration module to manage the master data used throughout the Department ERP. This ensures consistency across all modules and allows the department to adapt to changes without modifying the system.
+
+Actors
+Primary
+Super Admin
+Secondary
+HOD
+Academic Configuration
+
+Manage:
+
+Academic Years
+Semesters
+Regulations
+Departments
+Programs
+Branches
+Sections
+Batches
+Subject Management
+
+Manage:
+
+Subject Code
+Subject Name
+Subject Type
+Theory
+Lab
+Project
+Credits
+Semester
+Regulation
+Faculty Designations
+
+Manage:
+
+Professor
+Associate Professor
+Assistant Professor
+HoD
+Lab Assistant
+Data Entry Operator
+Other
+Student Categories
+
+Manage:
+
+Admission Type
+Category
+Student Status
+Active
+Graduated
+Discontinued
+Detained
+Attendance Configuration
+
+Manage:
+
+Attendance Status
+
+Present
+Absent
+Medical Leave
+On Duty
+Late
+
+Class Types
+
+Theory
+Lab
+Tutorial
+Seminar
+Project
+Internal Assessment Configuration
+
+Manage:
+
+Assessment Types
+
+Mid Examination
+Assignment
+Quiz
+Lab Internal
+Viva
+Project Review
+Event Categories
+
+Manage:
+
+Workshop
+Seminar
+Guest Lecture
+FDP
+Industrial Visit
+Hackathon
+Cultural Event
+Technical Event
+Sports
+Other
+Achievement Categories
+
+Manage:
+
+Internship
+Certification
+Hackathon
+Competition
+Publication
+Patent
+Sports
+Cultural
+Workshop
+Other
+Placement Configuration
+
+Manage:
+
+Offer Types
+
+Full-Time
+Internship
+Internship + PPO
+
+Placement Status
+
+Selected
+Joined
+Offer Declined
+Higher Studies
+Entrepreneurship
+Not Placed
+Document Categories
+
+Manage:
+
+Circular
+Academic Calendar
+Syllabus
+Time Table
+Meeting Minutes
+NBA
+NAAC
+Question Papers
+Forms
+Other
+Notification Categories
+
+Manage:
+
+General
+Academic
+Placement
+Examination
+Event
+Emergency
+Other
+Business Rules
+Only authorized users can modify master data.
+Changes shall be reflected across all modules.
+Existing records should remain valid even if a master value is updated or disabled.
+Master data values can be activated or deactivated instead of permanently deleted.
+Validation
+
+The system shall ensure:
+
+Mandatory fields are completed.
+Duplicate master records are not created.
+Values referenced by existing records cannot be permanently deleted.
+Workflow
+Open Configuration
+
+↓
+
+Select Master Data Module
+
+↓
+
+Add / Edit / Disable Value
+
+↓
+
+Save Changes
+
+↓
+
+Updated Configuration Available Across ERP
+Data Used By
+
+This module provides configuration data for:
+
+Student Management
+Faculty Management
+Subject Allocation
+Attendance
+Internal Assessment
+Results
+Placements
+Events
+Achievements
+Documents
+Reports
+Acceptance Criteria
+
+✅ Academic structure can be configured.
+
+✅ Master data can be added, edited, and disabled.
+
+✅ Changes are reflected across the ERP.
+
+✅ Invalid or duplicate master data is prevented.
+GOOD TO HAVE:
+1. Academic Session Management ⭐ (Recommended)
+
+This is more than just master data. It controls which semester is currently active.
+
+Example:
+
+Current Academic Year
+Current Semester
+Registration Status
+Attendance Open/Closed
+Internal Marks Open/Closed
+Result Import Status
+
+This prevents faculty from entering attendance for the wrong semester.
+
+2. Feedback Management ⭐⭐⭐ (Highly Recommended)
+
+Almost every college collects feedback.
+
+Types
+Student → Faculty
+Student → Subject
+Faculty → Department
+Alumni Feedback
+Employer Feedback
+
+It can be questionnaire-based with reports.6. Search ⭐⭐⭐
+
+3A global search.
+
+Search
+
+Student
+Faculty
+Subject
+Company
+Event
+Achievement
+Publication
+Document
+
+Very useful.
+
+4 Profile Management ⭐⭐⭐
+
+Separate from User Management.
+
+Each user should have
+
+Change Password
+Change Email
+Change Mobile
+Upload Profile Photo
+8. Backup & Restore (Admin)
+
+System backup.
+
+Probably only Super Admin.
+-end of feature specification-
+SPECIFIC INSTRUCTIONS AS A DEVLOPER FROM MY SIDE
+Database Design Specification
+1. Database Goals
+
+The database shall be designed to:
+
+Maintain data consistency.
+Avoid duplicate information.
+Support role-based access.
+Preserve historical records.
+Support future expansion.
+Optimize reporting performance.
+Minimize data redundancy.
+Ensure referential integrity.
+2. Database Principles
+Normalize Core Data
+
+Store information only once.
+
+Example:
+
+❌ Wrong
+
+Attendance
+
+Roll No
+Student Name
+Section
+Batch
+
+Student name, section and batch repeat millions of times.
+
+✅ Correct
+
+Attendance
+
+Student_ID
+
+Date
+
+Status
+
+Student information comes from Student table.
+
+Never Delete Important Records
+
+Instead use
+
+status
+
+is_active
+
+deleted_at
+
+Historical reports remain accurate.
+
+Use UUID Primary Keys
+
+Every major table
+
+id UUID
+
+instead of
+
+1
+2
+3
+
+Better for distributed systems and safer APIs.
+
+Audit Every Important Change
+
+Each table should contain
+
+created_at
+
+updated_at
+
+created_by
+
+updated_by
+
+Some tables may also include
+
+approved_by
+
+approved_at
+3. Database Modules
+
+Instead of 100 random tables, organize them into domains.
+
+Authentication
+users
+
+roles
+
+permissions
+
+role_permissions
+
+user_sessions
+Academic
+academic_years
+
+semesters
+
+batches
+
+sections
+
+subjects
+
+subject_allocations
+Student
+students
+
+student_documents
+
+student_parent_details
+
+student_achievements
+Faculty
+faculty
+
+faculty_publications
+
+faculty_documents
+Attendance
+attendance
+
+attendance_records
+Internal Assessment
+assessments
+
+assessment_marks
+Results
+semester_results
+
+result_subjects
+Placements
+companies
+
+placement_records
+Events
+events
+
+event_participants
+
+event_gallery
+Documents
+documents
+
+document_files
+Website
+announcements
+
+homepage_highlights
+
+gallery
+Reports
+
+No tables.
+
+Reports are generated from existing data.
+
+System
+settings
+
+notifications
+
+audit_logs
+4. Core Relationships
+User
+ │
+ ├──────────────┐
+ │              │
+Student      Faculty
+ │              │
+ │              ├── Publications
+ │              ├── Subject Allocation
+ │              └── Events
+ │
+ ├── Attendance
+ ├── Internal Marks
+ ├── Semester Results
+ ├── Achievements
+ ├── Placements
+ └── Event Participation
+
+Academic Structure
+
+Academic Year
+
+↓
+
+Semester
+
+↓
+
+Batch
+
+↓
+
+Section
+
+↓
+
+Students
+
+Teaching
+
+Faculty
+
+↓
+
+Subject Allocation
+
+↓
+
+Subject
+
+↓
+
+Attendance
+
+↓
+
+Internal Marks
+
+Placements
+
+Company
+
+↓
+
+Placement Record
+
+↓
+
+Student
+
+Events
+
+Event
+
+↓
+
+Participants
+
+↓
+
+Students
+5. Table Documentation Template
+
+Every table should follow one standard.
+
+Example
+students
+Purpose
+
+Stores academic and personal information of students.
+
+Primary Key
+id UUID
+Foreign Keys
+user_id
+
+batch_id
+
+section_id
+Columns
+roll_number
+
+registration_number
+
+name
+
+email
+
+mobile
+
+status
+Relationships
+Student
+
+↓
+
+Attendance
+
+↓
+
+Results
+
+↓
+
+Achievements
+
+↓
+
+Placements
+Constraints
+Roll Number Unique
+
+Registration Number Unique
+
+Email Unique
+Indexes
+roll_number
+
+registration_number
+
+section_id
+
+batch_id
+Business Rules
+Roll number cannot change after approval.
+Registration number must be unique.
+Student belongs to one section.
+Student belongs to one batch.
+
+Repeat this structure for every table.
+
+6. Naming Convention
+
+Tables
+
+snake_case
+
+students
+
+faculty_publications
+
+placement_records
+
+Columns
+
+snake_case
+
+created_at
+
+updated_at
+
+user_id
+
+student_id
+
+Primary Key
+
+id
+
+Foreign Key
+
+student_id
+
+faculty_id
+
+event_id
+
+Boolean
+
+is_active
+
+is_verified
+
+is_public
+
+Dates
+
+created_at
+
+updated_at
+
+published_at
+7. Common Columns
+
+Almost every table should include
+
+id
+
+created_at
+
+updated_at
+
+created_by
+
+updated_by
+
+is_active
+
+This keeps the schema consistent and simplifies auditing.
+
+8. Frontend Layout Specification
+
+Alongside the database, define the UI structure for each role.
+
+Public Website
+Header
+├── Home
+├── About
+├── Faculty
+├── Placements
+├── Achievements
+├── Events
+├── Gallery
+├── Contact
+└── Login
+
+Home Page
+├── Hero Banner
+├── Department Highlights
+├── Placement Highlights
+├── Student Achievements
+├── Faculty Highlights
+├── Recent Events
+├── Announcements
+├── Gallery Preview
+└── Footer
+Student Portal
+Sidebar
+├── Dashboard
+├── My Profile
+├── Attendance
+├── Internal Marks
+├── Results
+├── Achievements
+├── Placements
+├── Events
+├── Documents
+├── Announcements
+└── Settings
+Faculty Portal
+Sidebar
+├── Dashboard
+├── Profile
+├── Subject Allocation
+├── Attendance
+├── Internal Marks
+├── Research & Publications
+├── Events
+├── Documents
+├── Reports
+└── Settings
+Operator Portal
+Sidebar
+├── Dashboard
+├── Students
+├── Faculty
+├── Subject Allocation
+├── Attendance
+├── Internal Marks
+├── Results
+├── Placements
+├── Events
+├── Documents
+├── Reports
+└── Configuration
+HOD Portal
+Sidebar
+├── Dashboard
+├── Students
+├── Faculty
+├── Academics
+├── Placements
+├── Events
+├── Research
+├── Website Management
+├── Reports
+├── User Management
+└── System Configuration
+Data Model Specification
+Structure
+
+For every table, follow this format:
+
+Table Name
+
+Purpose
+
+Columns
+
+Primary Key
+
+Foreign Keys
+
+Relationships
+
+Constraints
+
+Indexes
+
+Business Rules
+
+Used By
+
+Example Data
+Table 1: Users
+Purpose
+
+Stores login credentials and basic account information for all users.
+
+Columns
+Column	Type	Required	Description
+id	UUID	Yes	Primary Key
+username	VARCHAR	Yes	Login username
+email	VARCHAR	Yes	Email address
+password_hash	TEXT	Yes	Encrypted password
+role_id	UUID	Yes	User role
+status	ENUM	Yes	Active / Inactive / Suspended
+last_login	TIMESTAMP	No	Last login
+created_at	TIMESTAMP	Yes	Creation date
+updated_at	TIMESTAMP	Yes	Last update
+Relationships
+Users
+
+↓
+
+Student
+
+Faculty
+
+Operator
+
+HOD
+Used By
+
+Every module.
+
+Table 2: Students
+
+Purpose
+
+Stores student academic and personal information.
+
+Relationships
+Student
+
+↓
+
+Attendance
+
+↓
+
+Internal Marks
+
+↓
+
+Results
+
+↓
+
+Achievements
+
+↓
+
+Placements
+
+↓
+
+Events
+Table 3: Faculty
+
+Purpose
+
+Faculty information.
+
+Relationships
+
+Faculty
+
+↓
+
+Subject Allocation
+
+↓
+
+Attendance
+
+↓
+
+Internal Marks
+
+↓
+
+Research
+
+↓
+
+Events
+Table 4: Subjects
+
+Purpose
+
+Subject master.
+
+Relationships
+
+Subject
+
+↓
+
+Subject Allocation
+
+↓
+
+Attendance
+
+↓
+
+Internal Assessment
+
+↓
+
+Results
+Table 5: Subject Allocation
+
+This is one of the most important tables.
+
+Faculty
+
++
+
+Subject
+
++
+
+Section
+
++
+
+Semester
+
+=
+
+Teaching Assignment
+
+Everything depends on this.
+
+Attendance
+
+↓
+
+Internal Marks
+
+↓
+
+Faculty Dashboard
+
+↓
+
+Workload
+
+Table 6: Attendance
+
+Header table
+
+Attendance Session
+
+↓
+
+Faculty
+
+Subject
+
+Section
+
+Date
+
+Period
+Table 7: Attendance Records
+Attendance Session
+
+↓
+
+Student
+
+↓
+
+Status
+Table 8: Internal Assessment
+Assessment
+
+↓
+
+Subject
+
+↓
+
+Section
+
+↓
+
+Faculty
+Table 9: Marks
+Assessment
+
+↓
+
+Student
+
+↓
+
+Marks
+Table 10: Semester Results
+Student
+
+↓
+
+Semester
+
+↓
+
+CGPA
+
+↓
+
+SGPA
+Table 11: Companies
+Company
+
+↓
+
+Placement Records
+Table 12: Placement Records
+Student
+
+↓
+
+Company
+
+↓
+
+Package
+
+↓
+
+Offer Type
+Table 13: Events
+Event
+
+↓
+
+Participants
+
+↓
+
+Gallery
+Table 14: Event Participants
+Student
+
+↓
+
+Event
+Table 15: Student Achievements
+Student
+
+↓
+
+Achievement
+
+↓
+
+Proof
+Table 16: Faculty Publications
+Faculty
+
+↓
+
+Publication
+Table 17: Documents
+Document
+
+↓
+
+Files
+Table 18: Announcements
+
+Separate table.
+
+Only published information.
+
+Table 19: Audit Logs
+
+Tracks every change.
+
+Table 20: Notifications
+
+Stores notifications.
+
+After Data Model
+
+Only then design the SQL.
+
+Then
+SQL Schema
+CREATE TABLE students...
+
+CREATE TABLE faculty...
+
+CREATE TABLE attendance...
+
+...
+Then
+Prisma Schema
+model Student
+
+model Faculty
+
+model Attendance
+
+...
+Then
+Backend
+
+Repositories
+
+Services
+
+Controllers
+
+Then
+APIs
+GET /students
+
+POST /students
+
+PUT /students/{id}
+One important improvement
+
+I also recommend creating a Module Dependency Document before SQL. It defines how modules depend on one another, preventing circular dependencies and ensuring a logical implementation order.
+
+Example:
+
+Authentication
+│
+├── Users
+│
+├── Academic Structure
+│      ├── Academic Year
+│      ├── Semester
+│      ├── Batch
+│      ├── Section
+│      └── Subjects
+│
+├── Students
+├── Faculty
+│
+├── Subject Allocation
+│
+├── Attendance
+├── Internal Assessment
+├── Results
+│
+├── Placements
+├── Events
+├── Achievements
+├── Publications
+│
+├── Documents & Announcements
+│
+├── Dashboard
+├── Reports
+│
+└── Website
+
+This dependency map makes it clear what must exist before another module can function, helping both developers and AI agents build the ERP in the correct sequence.
+Database Schema Specification
+Objective
+
+Define every database table, relationships, constraints, indexes, and optimization strategies to ensure scalability, consistency, and maintainability.
+
+1. Database Overview
+Database Engine
+PostgreSQL
+Primary Keys
+UUID
+Relationships
+One-to-One
+One-to-Many
+Many-to-Many (using junction tables)
+Naming Convention
+
+Tables
+
+students
+faculty
+subject_allocations
+attendance_records
+
+Columns
+
+student_id
+faculty_id
+created_at
+updated_at
+2. Entity Relationship Diagram (ERD)
+
+Create a complete ERD showing all entities and relationships.
+
+For example:
+
+Users
+ │
+ ├── Students
+ │      ├── Attendance
+ │      ├── Results
+ │      ├── Achievements
+ │      ├── Placements
+ │      └── Event Participation
+ │
+ └── Faculty
+        ├── Subject Allocation
+        ├── Publications
+        └── Attendance Sessions
+
+Subjects
+        │
+Subject Allocation
+        │
+Attendance
+        │
+Attendance Records
+3. Constraints
+
+For every table define:
+
+Primary Key
+
+Example
+
+id UUID PRIMARY KEY
+Foreign Keys
+
+Example
+
+student_id
+
+REFERENCES students(id)
+Unique Constraints
+
+Example
+
+registration_number
+
+UNIQUE
+Check Constraints
+
+Example
+
+attendance_percentage >=0
+
+attendance_percentage <=100
+Default Values
+
+Example
+
+created_at
+
+NOW()
+
+status
+
+ACTIVE
+4. Index Strategy
+
+Every frequently searched column should have indexes.
+
+Example
+
+Students
+
+roll_number
+
+registration_number
+
+section_id
+
+batch_id
+
+Attendance
+
+student_id
+
+date
+
+subject_id
+
+Placements
+
+student_id
+
+company_id
+
+Results
+
+student_id
+
+semester_id
+5. Cascade Rules
+
+Example
+
+Student
+
+↓
+
+Achievements
+
+If student deleted?
+
+NO
+
+Student becomes inactive.
+
+Achievements remain.
+
+Company
+
+↓
+
+Placement Records
+
+Company deleted?
+
+NO
+
+Archive only.
+
+Faculty
+
+↓
+
+Publications
+
+Faculty leaves?
+
+Still preserve publications.
+
+6. Soft Delete Policy
+
+Instead of
+
+DELETE
+
+Use
+
+status
+
+is_active
+
+deleted_at
+
+Historical reports remain correct.
+
+7. File Storage Design
+
+Database stores
+
+id
+
+file_name
+
+mime_type
+
+size
+
+uploaded_by
+
+storage_path
+
+Actual file
+
+↓
+
+MinIO
+
+8. Transaction Rules
+
+Attendance
+
+Header
+
+Attendance Records
+
+↓
+
+Single Transaction
+
+Either
+
+Everything saves
+
+or
+
+Nothing saves
+
+Internal Marks
+
+Marks
+
+Statistics
+
+↓
+
+Single Transaction
+
+Result Import
+
+Thousands of students
+
+↓
+
+Batch Transaction
+
+Rollback if import fails.
+
+9. Performance Strategy
+
+Pagination
+
+Students
+
+Faculty
+
+Events
+
+Documents
+
+Lazy Loading
+
+Photos
+
+PDF
+
+Certificates
+
+Caching
+
+Dashboard
+
+Reports
+
+Homepage Statistics
+10. Security
+
+Sensitive columns
+
+password_hash
+
+aadhaar_number
+
+phone
+
+email
+
+Encryption
+
+Audit logs
+
+Role-based access
+
+11. Backup Strategy
+
+Daily Backup
+
+↓
+
+Weekly Snapshot
+
+↓
+
+Monthly Archive
+
+12. Data Retention
+
+Attendance
+
+Never delete
+
+Results
+
+Never delete
+
+Placements
+
+Never delete
+
+Achievements
+
+Never delete
+
+Audit Logs
+
+Retain for defined period (e.g., 5 years or as per institutional policy)
+UI/UX Specification
+Objective
+
+Define the structure, navigation, layouts, and interactions for every user role to provide a consistent, intuitive, and efficient experience.
+
+Design Principles
+Clean and minimal interface.
+Consistent layouts across modules.
+Mobile-responsive where appropriate.
+Minimize clicks for common tasks.
+Role-based navigation.
+Consistent forms, tables, and actions.
+User Roles
+Student
+Faculty
+Data Entry Operator
+HOD
+Super Admin
+Public Visitor (Website)
+Public Website Layout
+---------------------------------------------------
+ Logo          Navigation              Login
+---------------------------------------------------
+
+Hero Banner
+
+Department Highlights
+
+Student Achievements
+
+Placement Highlights
+
+Faculty Highlights
+
+Recent Events
+
+Announcements
+
+Gallery
+
+Contact
+
+Footer
+ERP Layout
+
+Every logged-in user follows the same structure.
+
+---------------------------------------------------
+ Top Navbar
+---------------------------------------------------
+
+ Sidebar | Main Content Area
+         |
+         |
+         |
+
+---------------------------------------------------
+ Footer
+---------------------------------------------------
+Top Navigation
+
+Display:
+
+Department Logo
+Search
+Notifications
+User Profile
+Logout
+Sidebar
+
+Dynamic based on role.
+
+Student
+Dashboard
+
+My Profile
+
+Attendance
+
+Internal Marks
+
+Results
+
+Achievements
+
+Placements
+
+Events
+
+Documents
+
+Settings
+Faculty
+Dashboard
+
+My Profile
+
+Subject Allocation
+
+Attendance
+
+Internal Marks
+
+Research
+
+Events
+
+Documents
+
+Reports
+
+Settings
+Operator
+Dashboard
+
+Students
+
+Faculty
+
+Subject Allocation
+
+Attendance
+
+Internal Marks
+
+Results
+
+Placements
+
+Events
+
+Documents
+
+Reports
+
+Configuration
+HOD
+Dashboard
+
+Students
+
+Faculty
+
+Academic
+
+Placements
+
+Events
+
+Research
+
+Website
+
+Reports
+
+User Management
+
+System Configuration
+Dashboard Layout
+Welcome Banner
+
+↓
+
+Statistics Cards
+
+↓
+
+Quick Actions
+
+↓
+
+Recent Activities
+
+↓
+
+Charts
+
+↓
+
+Upcoming Events
+
+↓
+
+Announcements
+Standard Page Layout
+
+Every management page should follow the same structure.
+
+Page Title
+
+↓
+
+Action Buttons
+
+↓
+
+Filters
+
+↓
+
+Search
+
+↓
+
+Data Table
+
+↓
+
+Pagination
+Standard Form Layout
+Basic Information
+
+↓
+
+Academic Information
+
+↓
+
+Additional Information
+
+↓
+
+Document Upload
+
+↓
+
+Save / Cancel
+Student Profile Layout
+Photo
+
+↓
+
+Basic Information
+
+↓
+
+Academic Information
+
+↓
+
+Parent Details
+
+↓
+
+Achievements
+
+↓
+
+Placement
+
+↓
+
+Documents
+
+↓
+
+Timeline
+Faculty Profile Layout
+Photo
+
+↓
+
+Professional Information
+
+↓
+
+Subject Allocation
+
+↓
+
+Research
+
+↓
+
+Events
+
+↓
+
+Documents
+Data Tables
+
+Every table should support:
+
+Search
+Sorting
+Filters
+Pagination
+Export
+Column Visibility
+
+Example:
+
+Search
+
+↓
+
+Filters
+
+↓
+
+Table
+
+↓
+
+Pagination
+File Upload Component
+
+Should support:
+
+Drag & Drop
+Multiple Files
+Progress Indicator
+Preview
+Download
+Delete
+Notification Center
+
+Display:
+
+Announcements
+Placement Updates
+Event Reminders
+Attendance Alerts
+Internal Marks Deadlines
+Quick Actions
+
+Role-specific shortcuts.
+
+Student
+
+Add Achievement
+View Attendance
+View Results
+
+Faculty
+
+Take Attendance
+Enter Marks
+Add Publication
+
+Operator
+
+Add Student
+Import Results
+Create Event
+
+HOD
+
+Generate Report
+Publish Announcement
+Manage Users
+Responsive Behavior
+
+Desktop
+
+Full sidebar
+
+Tablet
+
+Collapsible sidebar
+
+Mobile
+
+Drawer menu
+Simplified dashboard
+Essential actions only
+UI Components
+
+Reusable components:
+
+Navbar
+Sidebar
+Breadcrumb
+Dashboard Card
+Statistics Card
+Data Table
+Search Box
+Filter Panel
+Form Section
+Profile Card
+Timeline
+Calendar
+File Upload
+Rich Text Editor
+Status Badge
+Notification Panel
+Modal Dialog
+Confirmation Dialog
+Pagination
+Toast Notification
+Empty State
+Loading Skeleton
+User Experience Rules
+Every action should provide feedback (success/error messages).
+Important actions require confirmation.
+Validation errors should appear beside fields.
+Long-running operations (e.g., result import) should show progress.
+Frequently used actions should be accessible within one or two clicks.
+System Architecture & Development Specification
+Objective
+
+Define the technical architecture, project structure, coding standards, data flow, security model, and communication patterns used throughout the Department ERP.
+
+Technology Stack
+Frontend
+Next.js
+React
+TypeScript
+Tailwind CSS
+shadcn/ui
+TanStack Table
+React Hook Form
+Zod
+Backend
+NestJS
+TypeScript
+Prisma ORM
+PostgreSQL
+Storage
+MinIO
+
+Store
+
+Student Documents
+Certificates
+Publications
+Event Photos
+Reports
+Authentication
+JWT Access Token
+Refresh Token
+Role-Based Access Control (RBAC)
+Architecture
+                    Browser
+                       │
+                Next.js Frontend
+                       │
+               REST API + JWT
+                       │
+              NestJS Backend
+                       │
+      ┌────────────┬─────────────┐
+      │            │             │
+ PostgreSQL      MinIO        Redis (Optional)
+Backend Structure
+src/
+
+modules/
+
+common/
+
+config/
+
+shared/
+
+prisma/
+
+Each module
+
+students/
+
+student.controller.ts
+
+student.service.ts
+
+student.repository.ts
+
+student.dto.ts
+
+student.entity.ts
+
+student.validator.ts
+
+Every module follows the same pattern.
+
+Frontend Structure
+app/
+
+components/
+
+features/
+
+hooks/
+
+services/
+
+types/
+
+utils/
+
+Each feature
+
+students/
+
+pages/
+
+components/
+
+hooks/
+
+services/
+
+types/
+Data Flow
+
+Example
+
+User
+
+↓
+
+Next.js Page
+
+↓
+
+React Query
+
+↓
+
+API Service
+
+↓
+
+NestJS Controller
+
+↓
+
+Service
+
+↓
+
+Repository
+
+↓
+
+Prisma
+
+↓
+
+PostgreSQL
+File Upload Flow
+User Upload
+
+↓
+
+Validation
+
+↓
+
+MinIO
+
+↓
+
+Database stores metadata
+
+↓
+
+File URL returned
+Security Rules
+Passwords hashed using Argon2
+JWT authentication
+RBAC authorization
+Input validation
+SQL Injection protection
+XSS protection
+CSRF protection (where applicable)
+Rate limiting
+Error Handling
+
+Every API returns
+
+Success
+
+↓
+
+Data
+
+↓
+
+Message
+
+or
+
+Success = false
+
+↓
+
+Error Code
+
+↓
+
+Message
+Logging
+
+Every important action
+
+↓
+
+Audit Log
+
+Examples
+
+Student Created
+Attendance Updated
+Marks Published
+Placement Added
+Event Created
+Configuration
+
+Environment Variables
+
+DATABASE_URL
+
+JWT_SECRET
+
+MINIO_ENDPOINT
+
+MINIO_ACCESS_KEY
+
+MINIO_SECRET_KEY
+
+REDIS_URL
+Coding Standards
+Strict TypeScript
+ESLint
+Prettier
+Repository Pattern
+DTO Validation
+Service Layer Business Logic
+No business logic in controllers
+Reusable UI components
+Development Workflow
+Requirement
+
+↓
+
+Database
+
+↓
+
+Backend
+
+↓
+
+Frontend
+
+↓
+
+Testing
+
+↓
+
+Deployment
+Testing Strategy
+
+Backend
+
+Unit Tests
+Integration Tests
+
+Frontend
+
+Component Tests
+End-to-End Tests
+Deployment
+Docker
+
+↓
+
+Nginx
+
+↓
+
+Next.js
+
+↓
+
+NestJS
+
+↓
+
+PostgreSQL
+
+↓
+
+MinIO
+1. Database Schema (Most Important)
+
+Spend the majority of your time here.
+
+Don't just create tables—design them for:
+
+Consistency
+Scalability
+Easy reporting
+Minimal redundancy
+Future extensions
+2. Frontend Layout (Second Most Important)
+
+Not colors or CSS—focus on information architecture.
+
+For every role define:
+
+Navigation
+Dashboard
+Main pages
+Page hierarchy
+Components on each page
+User flow
+
+Example:
+
+Student
+
+Dashboard
+    ↓
+Attendance
+    ↓
+Subject Details
+    ↓
+Attendance History
+
+This helps AI generate consistent pages.
+
+3. Component Library
+
+Instead of every page looking different, define reusable components.
+
+Example:
+
+Statistics Card
+
+Profile Card
+
+Data Table
+
+Filter Panel
+
+Search Box
+
+Upload Component
+
+Timeline
+
+Activity Feed
+
+Chart Card
+
+Calendar
+
+Badge
+
+Modal
+
+Confirmation Dialog
+
+Then every page becomes an assembly of these components.
+
+4. Design System
+
+This is often overlooked.
+
+Define things like:
+
+Sidebar width
+Navbar height
+Card spacing
+Form layout
+Table style
+Status badge colors
+Icon usage
+Typography
+Empty states
+Loading states
+
+Then AI doesn't invent different styles.
+
+5. Database-UI Mapping ⭐⭐⭐⭐⭐
+
+This is the document I think you're currently missing.
+
+For every table, specify:
+
+students
+
+↓
+
+Student List
+
+↓
+
+Student Profile
+
+↓
+
+Dashboard Card
+
+↓
+
+Reports
+
+Another example:
+
+placement_records
+
+↓
+
+Placement Module
+
+↓
+
+Student Profile
+
+↓
+
+Homepage
+
+↓
+
+Dashboard
+
+↓
+
+Reports
+
+This tells AI exactly where each piece of data appears.
+
+6. Data Flow Document ⭐⭐⭐⭐⭐
+
+Example:
+
+Student Created
+
+↓
+
+User Account
+
+↓
+
+Profile
+
+↓
+
+Subject Allocation
+
+↓
+
+Attendance
+
+↓
+
+Internal Marks
+
+↓
+
+Results
+
+↓
+
+Placement
+
+↓
+
+Graduation
+
+This lifecycle helps avoid inconsistent implementations.
+System Design Principles
+1. Ease of Use
+
+The ERP shall prioritize simplicity and efficiency for all users.
+
+Frequently used tasks should require the minimum number of steps.
+Forms should request only necessary information.
+Users should not repeatedly enter the same data.
+Related information should be available on a single screen whenever practical.
+The interface should minimize training requirements for new users.
+2. Minimize Administrative Workload
+
+The system should reduce manual work for department staff.
+
+Examples:
+
+Auto-fill available information.
+Automatically calculate attendance percentages.
+Automatically generate reports.
+Automatically update dashboard statistics.
+Reuse existing data instead of duplicate entry.
+3. Reduce Human Error
+
+The system should prevent mistakes rather than relying on users to detect them.
+
+Examples:
+
+Input validation.
+Duplicate record detection.
+Confirmation before destructive actions.
+Required field validation.
+Consistent dropdown values instead of free-text where appropriate.
+4. Support Real Department Workflows
+
+The system should reflect how departments actually operate instead of assuming ideal administrative processes.
+
+Examples:
+
+Allow draft saving where appropriate.
+Support bulk imports for repetitive data.
+Preserve historical records.
+Reduce unnecessary approval steps for low-risk operations.
+5. Progressive Verification
+
+Not every action requires immediate administrative verification.
+
+The system should distinguish between:
+
+Critical data requiring verification (e.g., official academic records, imported university results).
+User-managed information that can be submitted directly (e.g., achievements or profile updates), with optional verification if needed.
+
+This balances data quality with administrative effort.
+
+6. Role-Centered Design
+
+Each role should see only the information and actions necessary for their responsibilities.
+
+Students access academic and personal information.
+Faculty focus on teaching-related tasks.
+Operators manage administrative data.
+HODs monitor department-wide activities and reports.
+7. Automation First
+
+Whenever reliable automation is possible, it should be preferred over manual processes.
+
+Examples:
+
+Dashboard statistics
+Placement summaries
+Attendance percentages
+Student profiles
+Department website highlights
+Report generation
+
+I would also include one final principle because it aligns well with your comments:
+
+8. Practicality Over Formality
+
+The ERP is designed to support the day-to-day operation of the department. Features should balance data accuracy with practical usability. The system should avoid workflows that depend on constant manual review or approval by faculty or HODs unless such review is essential for academic integrity or institutional policy.
+1. Non-Functional Requirements (Highly Recommended)
+
+One page is enough.
+
+Examples:
+
+Performance (page loads within 2–3 seconds under normal load)
+Availability (system available during working hours)
+Scalability (support future departments)
+Security (RBAC, encrypted passwords)
+Reliability (backup and recovery)
+Maintainability (modular architecture)
+Usability (minimal training required)
+2. Assumptions & Limitations
+
+Example:
+
+Intended for a single department initially.
+University results are imported, not generated.
+HR and payroll are outside the project scope.
+Parent portal is not included.
+Mobile app is not included (web responsive only).
+
+This prevents examiners from asking why certain features are missing.
+4. Glossary
+
+Just one page.
+
+Example:
+
+HOD
+ERP
+Academic Year
+Semester
+Batch
+Section
+Internal Assessment
+CGPA
+SGPA
+RBAC
+
+Makes the documentation easier to read.
+The only thing that will ultimately determine the project's quality now is implementation. A well-designed, clean, consistent implementation with good database design and an intuitive UI will matter far more than adding more specification documents.

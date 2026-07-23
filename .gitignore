@@ -1,0 +1,28 @@
+# S-Class System Files (Omitted)
+.git_sclass_backup/
+.agents/
+runtime.py
+sclass.config.json
+prompts/
+capabilities.json
+state_schema.json
+events.json
+workflow.json
+install.ps1
+install.sh
+tests/
+docs/
+plugin.json
+__pycache__/
+
+# Application Build & Node Dependencies
+*.zip
+node_modules/
+.next/
+dist/
+build/
+*.log
+dev.db
+dev.db-journal
+.env
+uploads/

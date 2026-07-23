@@ -1,0 +1,222 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  username  String     @unique
+  password  String
+  role      String     // "SUPER_ADMIN", "HOD", "FACULTY", "STUDENT", "DATA_ENTRY"
+  createdAt DateTime   @default(now())
+  
+  Student   Student[]
+  Faculty   Faculty[]
+  AuditLog  AuditLog[]
+}
+
+model Student {
+  id                 Int              @id @default(autoincrement())
+  userId             Int              @unique
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name               String
+  rollNumber         String           @unique
+  batch              String
+  section            String
+  guardianName       String
+  status             String           // "PENDING_PROFILE", "SUBMITTED", "UNDER_VERIFICATION", "APPROVED", "ACTIVE", "GRADUATED"
+  createdAt          DateTime         @default(now())
+  
+  // Profile Completion fields
+  dob                String?
+  gender             String?
+  bloodGroup         String?
+  aadhaarNumber      String?
+  category           String?
+  caste              String?
+  religion           String?
+  nationality        String?
+  personalEmail      String?
+  mobileNumber       String?
+  altMobileNumber    String?
+  permanentAddress   String?
+  currentAddress     String?
+  fatherName         String?
+  motherName         String?
+  parentMobileNumber String?
+  parentEmail        String?
+  academicBackground String?          // Intermediate / Diploma previous details
+  
+  Attendance         Attendance[]
+  Mark               Mark[]
+  PlacementOffer     PlacementOffer[]
+  Achievement        Achievement[]
+}
+
+model Faculty {
+  id            Int          @id @default(autoincrement())
+  userId        Int          @unique
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  qualification String
+  experience    Int          // Years of experience
+  workload      Int          @default(0) // Weekly workload hours
+  createdAt     DateTime     @default(now())
+  
+  // Faculty management details
+  employeeId    String       @unique
+  officialEmail String       @unique
+  mobileNumber  String?
+  designation   String?      // e.g. "Assistant Professor", "Professor"
+  joiningDate   String?      // YYYY-MM-DD
+  employmentType String?     // "PERMANENT", "CONTRACT", "GUEST"
+  bio           String?
+
+  Allocation    Allocation[]
+  Research      Research[]
+}
+
+model Subject {
+  id          Int          @id @default(autoincrement())
+  code        String       @unique
+  name        String
+  semester    Int
+  createdAt   DateTime     @default(now())
+
+  Allocation  Allocation[]
+  Attendance  Attendance[]
+  Mark        Mark[]
+  Assessment  Assessment[]
+}
+
+model Allocation {
+  id        Int      @id @default(autoincrement())
+  facultyId Int
+  faculty   Faculty  @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  subjectId Int
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  section   String   // e.g. "A", "B"
+  createdAt DateTime @default(now())
+}
+
+model Attendance {
+  id        Int      @id @default(autoincrement())
+  studentId Int
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectId Int
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  date      String   // "YYYY-MM-DD"
+  status    String   // "PRESENT", "ABSENT", "LATE", "MEDICAL_LEAVE", "ON_DUTY"
+  createdAt DateTime @default(now())
+}
+
+model Assessment {
+  id           Int      @id @default(autoincrement())
+  name         String   // e.g. "Mid-1", "Mid-2", "Assignment"
+  type         String   // e.g. "INTERNAL_EXAM", "LAB", "QUIZ"
+  maxMarks     Float
+  passingMarks Float
+  startDate    String
+  endDate      String
+  subjectId    Int
+  subject      Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  
+  Mark         Mark[]
+}
+
+model Mark {
+  id            Int         @id @default(autoincrement())
+  studentId     Int
+  student       Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  assessmentId  Int?
+  assessment    Assessment? @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  subjectId     Int
+  subject       Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  type          String      // "INTERNAL", "EXTERNAL"
+  marksObtained Float
+  maxMarks      Float
+  createdAt     DateTime    @default(now())
+}
+
+model Event {
+  id           Int      @id @default(autoincrement())
+  title        String
+  date         String   // "YYYY-MM-DD"
+  description  String
+  photographs  String   @default("") // comma-separated filenames
+  participants String   @default("") // comma-separated student roll numbers
+  createdAt    DateTime @default(now())
+}
+
+model Placement {
+  id           Int      @id @default(autoincrement())
+  companyName  String
+  driveDate    String   // "YYYY-MM-DD"
+  eligibility  String   // CGPA criteria or details
+  status       String   // "UPCOMING", "COMPLETED"
+  offers       String   @default("") // comma-separated details of placed students
+  createdAt    DateTime @default(now())
+}
+
+model PlacementOffer {
+  id           Int      @id @default(autoincrement())
+  studentId    Int
+  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  companyName  String
+  jobRole      String
+  offerType    String   // "FULL_TIME", "INTERNSHIP", "PPO"
+  packageLpa   Float
+  offerDate    String
+  status       String   // "SELECTED", "JOINED", "DECLINED"
+  isFinal      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model Achievement {
+  id          Int      @id @default(autoincrement())
+  studentId   Int
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  title       String
+  category    String   // "INTERNSHIP", "CERTIFICATION", "HACKATHON", "OTHER"
+  organizer   String
+  date        String
+  description String
+  level       String   // "COLLEGE", "STATE", "NATIONAL", "INTERNATIONAL"
+  position    String   // "WINNER", "RUNNER_UP", "PARTICIPANT", "COMPLETED"
+  proofFile   String   // File path or filename
+  createdAt   DateTime @default(now())
+}
+
+model Research {
+  id        Int      @id @default(autoincrement())
+  facultyId Int
+  faculty   Faculty  @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  type      String   // "PUBLICATION", "CONFERENCE", "PATENT", "PROJECT"
+  title     String
+  details   String   // description, authors, patent code, project funding
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String   // e.g. "STUDENT_CREATE", "ATTENDANCE_UPDATE"
+  details   String   // text/json details
+  timestamp DateTime @default(now())
+}
+
+model Document {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String   // "ACADEMIC_CALENDAR", "SYLLABUS", "CIRCULAR", "NOTICE"
+  description String   @default("")
+  filePath    String
+  visibility  String   // "HOD_ONLY", "FACULTY_ONLY", "STUDENTS", "PUBLIC"
+  createdAt   DateTime @default(now())
+}
